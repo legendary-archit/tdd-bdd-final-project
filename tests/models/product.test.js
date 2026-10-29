@@ -161,6 +161,24 @@ describe('Product Model', () => {
       found.forEach(p => expect(p.available).toBe(available));
     });
   });
+    describe('Additional Finders', () => {
+    test('should find products by price', async () => {
+      const products = await ProductFactory.createList(5);
+      const price = products[0].price;
+
+      const found = await Product.findByPrice(price);
+      expect(found.length).toBeGreaterThan(0);
+      found.forEach(p => expect(parseFloat(p.price)).toBe(parseFloat(price)));
+    });
+
+    test('should default to available products when no argument is given', async () => {
+      await ProductFactory.createList(5, { available: true });
+      await ProductFactory.createList(3, { available: false });
+
+      const found = await Product.findByAvailability();
+      expect(found.length).toBe(5);
+    });
+  });
 });
 
   
